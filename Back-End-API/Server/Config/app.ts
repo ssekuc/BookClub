@@ -4,9 +4,6 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
-import authRouter from '../Routes/auth.route.server';
-
-
 
 // import the database connector / adapter package
 import mongoose from 'mongoose';
@@ -41,7 +38,6 @@ const app = express();
 // Complete the DB Connection Configuration
 
 import * as DBConfig from './db'
-import User from "../models/user";
 
 mongoose.connect(DBConfig.LocalURI);
 const db = mongoose.connection; // alias for the mongoose connection
@@ -56,6 +52,10 @@ db.on("error", function()
 {
   console.error(`Connection Error`);
 });
+
+
+
+
 
 
 // view engine setup
@@ -88,17 +88,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Step 7 for auth - implement the auth strategy
-passport.use((User as any).createStrategy());
+//passport.use(User.createStrategy());
 
 // Step 8 for auth - setup User serialization and deserialization (encoding / decoding)
-passport.serializeUser((User as any).serializeUser());
-passport.deserializeUser((User as any).deserializeUser());
+//passport.serializeUser(User.serializeUser());
+//passport.deserializeUser(User.deserializeUser());
 
 // add routing 
 app.use('/', indexRouter);
 
 
-app.use('/', authRouter);
+
 
 
 

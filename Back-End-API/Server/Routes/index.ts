@@ -16,7 +16,6 @@ router.get('/', DisplayHomePage);
 router.get('/home', DisplayHomePage);
 router.get('/index', DisplayHomePage);
 
-
 module.exports = router
 
 export default router;

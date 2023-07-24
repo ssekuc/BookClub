@@ -3,7 +3,7 @@ import { DisplayLoginPage,
     DisplayRegisterPage,
     ProcessLoginPage,
     ProcessLogoutPage,
-    ProcessRegisterPage } from '../controllers/auth.controller.server';
+    ProcessRegisterPage } from '../Controllers/auth.controller.server';
 
 const router = Router();
 
