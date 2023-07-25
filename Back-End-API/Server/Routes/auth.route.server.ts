@@ -1,11 +1,13 @@
-import { Router } from 'express';
+import express from 'express';
+const router = express.Router();
+
 import { DisplayLoginPage,
     DisplayRegisterPage,
     ProcessLoginPage,
     ProcessLogoutPage,
-    ProcessRegisterPage } from '../Controllers/auth.controller.server';
+    ProcessRegisterPage } from '../controllers/auth.controller.server';
 
-const router = Router();
+//const router = Router();
 
 router.get('/login', DisplayLoginPage);
 router.get('/register', DisplayRegisterPage);

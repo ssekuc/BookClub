@@ -26,6 +26,8 @@ import cors from 'cors'; // Cross-Origin Resource Sharing
 
 // import router data from the router module(s)
 import indexRouter from '../Routes/index'; 
+import authRouter from '../Routes/auth.route.server'
+
 
 
 
@@ -96,6 +98,7 @@ app.use(passport.session());
 
 // add routing 
 app.use('/', indexRouter);
+app.use('/', authRouter);
 
 
 

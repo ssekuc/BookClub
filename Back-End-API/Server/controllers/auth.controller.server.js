@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessLogoutPage = exports.ProcessRegisterPage = exports.ProcessLoginPage = exports.DisplayRegisterPage = exports.DisplayLoginPage = void 0;
 const passport = __importStar(require("passport"));
-const user_1 = __importDefault(require("../Models/user"));
+const user_1 = __importDefault(require("../models/user"));
 const index_1 = require("../utils/index");
 function DisplayHomePage(req, res, next) {
     res.render('index', { title: 'Home', page: 'home' });

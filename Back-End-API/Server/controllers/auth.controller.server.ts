@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Request, Response, NextFunction } from "express";
 import * as passport from "passport";
-import User, { IUser } from "../Models/user";
+import User, { IUser } from "../models/user";
 import { UserDisplayName } from "../utils/index";
 
 function DisplayHomePage(req: express.Request, res: express.Response, next: express.NextFunction) {
