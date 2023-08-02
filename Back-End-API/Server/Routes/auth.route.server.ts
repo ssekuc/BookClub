@@ -2,11 +2,13 @@ import express from 'express';
 import Roles from '../models/roles'
 const router = express.Router();
 
-import { DisplayLoginPage,
+import {
+    DisplayLoginPage,
     DisplayRegisterPage,
     ProcessLoginPage,
     ProcessLogoutPage,
-    ProcessRegisterPage } from '../controllers/auth.controller.server';
+    ProcessRegisterPage
+} from '../controllers/auth.controller.server';
 
 //const router = Router();
 
@@ -36,7 +38,7 @@ router.post('/roles', async (req, res) => {
 
     const Role = new Roles({
         name: req.body.name
-     
+
     })
     try {
         const newRole = await Role.save()
