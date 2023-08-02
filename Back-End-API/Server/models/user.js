@@ -34,7 +34,6 @@ const UserSchema = new mongoose_1.Schema({
     emailAddress: String,
 }, {
     timestamps: true,
-    collection: 'users'
 });
 UserSchema.plugin(passport_local_mongoose_1.default);
 const User = mongoose_1.default.model('User', UserSchema);

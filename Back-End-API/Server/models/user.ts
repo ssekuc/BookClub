@@ -19,7 +19,7 @@ const UserSchema = new Schema<IUser>({
     emailAddress: String,
 },{
     timestamps: true,
-    collection: 'users'
+  
 });
 
 UserSchema.plugin(passportLocalMongoose);
