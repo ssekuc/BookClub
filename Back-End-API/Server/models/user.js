@@ -32,6 +32,7 @@ const UserSchema = new mongoose_1.Schema({
     displayName: String,
     username: String,
     emailAddress: String,
+    role: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Roles', required: true }
 }, {
     timestamps: true,
 });

@@ -7,6 +7,7 @@ export interface IUser extends Document {
     displayName: string;
     username: string;
     emailAddress: string;
+    role: mongoose.Types.ObjectId;
 }
 
 export interface IUserModel extends Model<IUser> {
@@ -17,6 +18,7 @@ const UserSchema = new Schema<IUser>({
     displayName: String,
     username: String,
     emailAddress: String,
+    role: { type: Schema.Types.ObjectId, ref: 'Roles', required: true }
 },{
     timestamps: true,
   
