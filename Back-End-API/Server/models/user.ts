@@ -2,6 +2,7 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 // @ts-ignore
 import passportLocalMongoose from 'passport-local-mongoose';
+import Roles from './roles';
 
 export interface IUser extends Document {
     displayName: string;
