@@ -2,7 +2,6 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 
 interface IBook extends Document {
-    UserId: mongoose.Types.ObjectId;
     Name: String,
     Author: String,
     Sipnosis: String,
@@ -28,7 +27,6 @@ const BookSchema: Schema<IBook> = new Schema
     Edition: { type: String, require: true },
     Publisher: { type: String, require: true },
     cover: { type: String, require: true },
-    UserId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
     
 
 })

@@ -38,6 +38,7 @@ const connect_flash_1 = __importDefault(require("connect-flash"));
 const cors_1 = __importDefault(require("cors"));
 const index_1 = __importDefault(require("../Routes/index"));
 const auth_route_server_1 = __importDefault(require("../Routes/auth.route.server"));
+const books_1 = __importDefault(require("../Routes/books"));
 const app = (0, express_1.default)();
 const DBConfig = __importStar(require("./db"));
 mongoose_1.default.connect(DBConfig.RemoteURI);
@@ -67,6 +68,7 @@ app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use('/', index_1.default);
 app.use('/', auth_route_server_1.default);
+app.use('/', books_1.default);
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
 });
