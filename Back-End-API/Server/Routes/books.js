@@ -7,13 +7,13 @@ const express_1 = __importDefault(require("express"));
 const book_1 = require("../controllers/book");
 const router = express_1.default.Router();
 const bookController = require('../controllers/book');
-router.get('/books/list', bookController.bookList);
-router.post('/books/create', book_1.upload, bookController.createBook);
-router.get('/api/getbook/:id', bookController.getBook, (req, res) => {
+router.get('/api/books', bookController.getAllBooks);
+router.post('/api/createbooks', book_1.upload, bookController.createBook);
+router.get('/api/getbook/:id', bookController.getBookById, (req, res) => {
     res.json(res.book);
 });
-router.patch('/api/updatebook/:id', bookController.getBook, bookController.updateBook);
-router.delete('/api/deletebook/:id', bookController.getGame, bookController.deleteBook);
+router.patch('/api/updatebook/:id', bookController.getBookById, bookController.updateBook);
+router.delete('/api/deletebook/:id', bookController.getBookById, bookController.deleteBook);
 module.exports = router;
 exports.default = router;
 //# sourceMappingURL=books.js.map

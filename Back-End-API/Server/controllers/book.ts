@@ -7,16 +7,60 @@ import Books from '../models/books'
 
 
 // GET BOOK LIST
-async function bookList(req: any, res: any) {
+async function getAllBooks(req: any, res: any) {
 
     try {
-        const book = await Books.find()
+        const { query,  Year, Author, sort } = req.query;
+        const filter = createFilter(query,  Year, Author );
+        const book = await fetchBooks(filter, sort);
+       // const book = await Books.find()
         res.json(book)
     } catch (err) {
         res.status(500).json({ message: err })
     }
 
 }
+
+
+
+// BOOK LIST FILTER BY NAME, YEAR AND AUTHOR
+const createFilter = (query: any, Year: any, Author: any) => {
+
+    const filter: any = {};
+
+    if (query) {
+        filter.Name = { $regex: query, $options: 'i' };
+    }
+
+    if (Year) {
+        filter.Year = Number(Year);
+    }
+
+    if (Author) {
+        filter.Author = { $regex: Author, $options: 'i' };
+    }
+
+    return filter;
+};
+
+// BOOK LIST FILTER ASC AND DESC
+const fetchBooks = async (filter: any, sort: any) => {
+    let query = Books.find(filter);
+
+    if (sort === 'asc') {
+        query = query.sort({ Name: 1 });
+    } else if (sort === 'desc') {
+        query = query.sort({ Name: -1 });
+    }
+
+    const book = await query.exec();
+    return book;
+};
+
+
+
+
+
 
 // Configure Multer for image upload
 const storage = multer.diskStorage({
@@ -72,7 +116,7 @@ async function createBook(req: any, res: any) {
 }
 
 // GET BOOK 
-async function getBook(req: any, res: any, next: any) {
+async function getBookById(req: any, res: any, next: any) {
     let book
     try {
         book = await Books.findById(req.params.id)
@@ -114,7 +158,6 @@ async function updateBook(req: any, res: any) {
 
 }
 
-
 // DELETE BOOK
 
 async function deleteBook(req: any, res: any) {
@@ -131,4 +174,4 @@ async function deleteBook(req: any, res: any) {
     }
 }
 
-module.exports = {bookList,createBook,upload, getBook,updateBook,deleteBook };
+module.exports = {getAllBooks,createBook,upload, getBookById,updateBook,deleteBook };

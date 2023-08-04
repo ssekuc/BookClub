@@ -7,15 +7,41 @@ exports.upload = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const books_1 = __importDefault(require("../models/books"));
-async function bookList(req, res) {
+async function getAllBooks(req, res) {
     try {
-        const book = await books_1.default.find();
+        const { query, Year, Author, sort } = req.query;
+        const filter = createFilter(query, Year, Author);
+        const book = await fetchBooks(filter, sort);
         res.json(book);
     }
     catch (err) {
         res.status(500).json({ message: err });
     }
 }
+const createFilter = (query, Year, Author) => {
+    const filter = {};
+    if (query) {
+        filter.Name = { $regex: query, $options: 'i' };
+    }
+    if (Year) {
+        filter.Year = Number(Year);
+    }
+    if (Author) {
+        filter.Author = { $regex: Author, $options: 'i' };
+    }
+    return filter;
+};
+const fetchBooks = async (filter, sort) => {
+    let query = books_1.default.find(filter);
+    if (sort === 'asc') {
+        query = query.sort({ Name: 1 });
+    }
+    else if (sort === 'desc') {
+        query = query.sort({ Name: -1 });
+    }
+    const book = await query.exec();
+    return book;
+};
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads');
@@ -54,7 +80,7 @@ async function createBook(req, res) {
         res.status(400).json({ message: err });
     }
 }
-async function getBook(req, res, next) {
+async function getBookById(req, res, next) {
     let book;
     try {
         book = await books_1.default.findById(req.params.id);
@@ -90,5 +116,5 @@ async function deleteBook(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { bookList, createBook, upload: exports.upload, getBook, updateBook, deleteBook };
+module.exports = { getAllBooks, createBook, upload: exports.upload, getBookById, updateBook, deleteBook };
 //# sourceMappingURL=book.js.map
