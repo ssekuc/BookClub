@@ -1,7 +1,46 @@
 import React, { useState } from "react";
 import BookList from "./BookList";
 import ShoppingCart from "./Shoppingcart";
+import axios from 'axios';
 import "./App.css";
+
+// GET BOOK LIST
+// http://localhost:3000/api/books
+
+//CREATE A NEW BOOK
+//http://localhost:3000/books/create
+
+
+//UPDATED BOOK
+//http://localhost:3000/api/book/update/:id
+
+// DELETED BOOK
+//http://localhost:3000/api/book/delete/:id
+
+
+
+
+function book() {
+  const [data, setData] = useState([]); // State to store fetched data
+
+  useEffect(() => {
+    // Fetch data when the component mounts
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/books');
+      setData(response.data); // Update the state with fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  return data
+}
+
+//export default DataFetchingComponent;
+
 
 const App = () => {
   const [books] = useState([
