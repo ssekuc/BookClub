@@ -15,8 +15,6 @@ export function DisplayLoginPage(req: express.Request, res: express.Response, ne
     }
 
     return res.redirect('/')
-
-    // res.render('index',{title: 'Login', page:'login', displayName: UserDisplayName(req)})
 }
 
 export function DisplayRegisterPage(req: Request, res: Response, next: NextFunction): void {
