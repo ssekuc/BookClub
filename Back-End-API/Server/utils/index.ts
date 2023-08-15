@@ -1,16 +1,26 @@
-import { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
-export function UserDisplayName(req: Request): string {
-    if(req.user){
-        let user = req.user as { displayName: string }; // Assuming req.user has a displayName property
-        return user.displayName;
+// convenience function to return the DisplayName of the User
+export function UserDisplayName(req: express.Request): string
+{
+    if(req.user)
+    {
+        let user = req.user as UserDocument;
+        return user.DisplayName.toString();
     }
     return '';
 }
 
-export function AuthGuard(req: Request, res: Response, next: NextFunction): void | Response {
-    if(!req.isAuthenticated()){
-        return res.redirect('/login')
+// helper function for guarding secure locations
+
+export  function AuthGuard(req: express.Request, res: express.Response, next: express.NextFunction)
+
+{
+    if (!req.isAuthenticated())
+    {
+        return res.redirect('/login');
     }
     next();
 }
+
+

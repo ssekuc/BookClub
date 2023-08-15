@@ -1,0 +1,47 @@
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark  bg-dark">
+      <div class="container-fluid">
+  
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/books">HOME</a>
+              </li>
+            <li class="nav-item">
+                <li class="nav-item mx-0 "><a class="nav-link active <%= (page == 'books') ? 'active' : ''; %>" href="/user-profile"> PROFILE</a></li>
+
+
+
+
+              <% if(displayName) { %>
+                <li class="nav-item mx-0 "><a class="nav-link rounded <%= (page == 'cart') ? 'active' : ''; %>" href="/cart">CART</a></li>
+
+                <li class="nav-item mx-0 "><a class="nav-link rounded <%= (page == 'books') ? 'active' : ''; %>" href="/books">BOOKS</a></li>
+                <li class="nav-item mx-0 "><a class="nav-link rounded" href="/logout">Logout</a></li>
+            
+
+             <% } else { %>
+
+                 <li class="nav-item mx-0 "><a class="nav-link rounded <%= (page == 'login') ? 'active' : ''; %>" href="/login"> LOGOUT</a></li>
+
+              
+     
+             <% } %>
+          </ul>
+
+          
+          <form action="/books" method="get" class="d-flex">
+            <input class="form-control me-2" type="search" name="name" placeholder="Search Book" aria-label="Search">
+            <button class="btn btn-outline-success"  type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+
+  
+  
+  </header>

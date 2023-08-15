@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.upload = void 0;
+exports.DisplayBookCartPage = exports.DisplayBookListPage = exports.upload = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const books_1 = __importDefault(require("../models/books"));
+const utils_1 = require("../utils");
 async function getAllBooks(req, res) {
     try {
         const { query, Year, Author, sort } = req.query;
@@ -116,5 +117,31 @@ async function deleteBook(req, res) {
         res.status(500).json({ message: err });
     }
 }
-module.exports = { getAllBooks, createBook, upload: exports.upload, getBookById, updateBook, deleteBook };
+async function DisplayBookListPage(req, res, next) {
+    try {
+        const { name } = req.query;
+        const filter = createFilter(name, null, null);
+        const books = await fetchBooks(filter, 'desc');
+        res.render('index', { title: 'Books', page: 'books', books: books, displayName: (0, utils_1.UserDisplayName)(req) });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.DisplayBookListPage = DisplayBookListPage;
+async function DisplayBookCartPage(req, res, next) {
+    try {
+        const { name } = req.query;
+        const filter = createFilter(name, null, null);
+        const books = await fetchBooks(filter, 'desc');
+        res.render('index', { title: 'Cart', page: 'books', books: books, displayName: (0, utils_1.UserDisplayName)(req) });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.DisplayBookCartPage = DisplayBookCartPage;
+module.exports = { getAllBooks, createBook, upload: exports.upload, getBookById, updateBook, deleteBook, DisplayBookListPage, fetchBooks, createFilter };
 //# sourceMappingURL=book.js.map

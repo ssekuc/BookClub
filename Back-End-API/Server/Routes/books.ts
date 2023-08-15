@@ -6,6 +6,14 @@ const router = express.Router();
 
 
 const bookController = require('../controllers/book')
+import { AuthGuard } from '../utils/index';
+
+
+
+/* Display Books List Page */
+router.get('/books', AuthGuard, bookController.DisplayBookListPage);
+
+
 
 // GET BOOK LIST
 router.get('/api/books', bookController.getAllBooks)

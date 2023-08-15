@@ -7,6 +7,8 @@ const express_1 = __importDefault(require("express"));
 const book_1 = require("../controllers/book");
 const router = express_1.default.Router();
 const bookController = require('../controllers/book');
+const index_1 = require("../utils/index");
+router.get('/books', index_1.AuthGuard, bookController.DisplayBookListPage);
 router.get('/api/books', bookController.getAllBooks);
 router.post('/api/books/create', book_1.upload, bookController.createBook);
 router.get('/api/book/:id', bookController.getBookById, (req, res) => {

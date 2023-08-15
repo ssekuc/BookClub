@@ -34,11 +34,14 @@ const morgan_1 = __importDefault(require("morgan"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
+const passport_local_1 = __importDefault(require("passport-local"));
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const cors_1 = __importDefault(require("cors"));
+let localStrategy = passport_local_1.default.Strategy;
+const user_1 = __importDefault(require("../models/user"));
 const index_1 = __importDefault(require("../Routes/index"));
-const auth_route_server_1 = __importDefault(require("../Routes/auth.route.server"));
 const books_1 = __importDefault(require("../Routes/books"));
+const auth_1 = __importDefault(require("../Routes/auth"));
 const app = (0, express_1.default)();
 const DBConfig = __importStar(require("./db"));
 mongoose_1.default.connect(DBConfig.RemoteURI);
@@ -51,6 +54,7 @@ db.on("error", function () {
 });
 app.set('views', path_1.default.join(__dirname, '../Views'));
 app.set('view engine', 'ejs');
+app.use(express_1.default.static('uploads'));
 app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -66,9 +70,12 @@ app.use((0, express_session_1.default)({
 app.use((0, connect_flash_1.default)());
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
+passport_1.default.use(user_1.default.createStrategy());
+passport_1.default.serializeUser(user_1.default.serializeUser());
+passport_1.default.deserializeUser(user_1.default.deserializeUser());
 app.use('/', index_1.default);
-app.use('/', auth_route_server_1.default);
 app.use('/', books_1.default);
+app.use('/', auth_1.default);
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
 });

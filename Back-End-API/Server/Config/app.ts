@@ -1,9 +1,8 @@
 import createError from 'http-errors';
-import express, { NextFunction, Router } from 'express';
+import express, { NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-
 
 // import the database connector / adapter package
 import mongoose from 'mongoose';
@@ -13,35 +12,26 @@ import session from 'express-session';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import flash from 'connect-flash';
-import connect from 'connect';
 
 // modules for JWT support
 import cors from 'cors'; // Cross-Origin Resource Sharing
 
 // Step 2 for auth - define our auth objects
-//let localStrategy = passportLocal.Strategy; // alias
+let localStrategy = passportLocal.Strategy; // alias
 
 // Step 3 for auth - import the User Model
-
+import User from '../models/user';
 
 // import router data from the router module(s)
 import indexRouter from '../Routes/index'; 
-import authRouter from '../Routes/auth.route.server'
-import booksRouter from '../Routes/books'
-
-
-
+import BooksRouter from '../Routes/books';
+import authRouter from '../Routes/auth';
 
 // create the application object - which is of type express
 const app = express();
 
-
-
-
 // Complete the DB Connection Configuration
-
-import * as DBConfig from './db'
-
+import * as DBConfig from './db';
 mongoose.connect(DBConfig.RemoteURI);
 const db = mongoose.connection; // alias for the mongoose connection
 
@@ -56,21 +46,16 @@ db.on("error", function()
   console.error(`Connection Error`);
 });
 
-
-
-
-
-
 // view engine setup
 app.set('views', path.join(__dirname, '../Views'));
 app.set('view engine', 'ejs');
+app.use(express.static('uploads'));
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../../Client')));
-
 app.use(express.static(path.join(__dirname, '../../node_modules')));
 
 app.use(cors()); // adds CORS middleware
@@ -92,22 +77,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Step 7 for auth - implement the auth strategy
-//passport.use(User.createStrategy());
+passport.use(User.createStrategy());
 
 // Step 8 for auth - setup User serialization and deserialization (encoding / decoding)
-//passport.serializeUser(User.serializeUser());
-//passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // add routing 
 app.use('/', indexRouter);
+app.use('/', BooksRouter);
 app.use('/', authRouter);
-app.use('/', booksRouter);
-
-
-
-
-
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) 
@@ -127,10 +106,4 @@ app.use(function(err: createError.HttpError, req: express.Request, res: express.
   res.render('error');
 });
 
-
-
 export default app;
-
-
-
-
