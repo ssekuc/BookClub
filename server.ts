@@ -9,17 +9,18 @@ import debug from 'debug';
 debug('book-club:server');
 import http from 'http';
 import { HttpError } from 'http-errors';
+import path from "path";
+import express from "express";
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3002');
 app.set('port', port);
 
 const server = http.createServer(app);
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-function normalizePort(val:string) 
+function normalizePort(val:string)
 {
   var port = parseInt(val, 10);
 
@@ -36,7 +37,7 @@ function normalizePort(val:string)
   return false;
 }
 
-function onError(error: HttpError) 
+function onError(error: HttpError)
 {
   if (error.syscall !== 'listen') 
   {

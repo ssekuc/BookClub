@@ -1,136 +1,96 @@
-import createError from 'http-errors';
-import express, { NextFunction, Router } from 'express';
-import path from 'path';
-import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+
+import express = require("express");
+import mongoose = require("mongoose");
+import passport = require('passport');
+import passportLocal = require('passport-local');
+import session = require('express-session');
+import cookieParser = require('cookie-parser');
+import path = require('path');
+import cors = require('cors');
+import passportJWT = require('passport-jwt');
+import logger = require('morgan');
+import createError = require('http-errors');
+import flash = require('connect-flash');
 
 
-// import the database connector / adapter package
-import mongoose from 'mongoose';
+import User from '../models/user';
+import indexRouter from '../Routes/index';
+import authRouter from '../Routes/auth.route.server';
+import booksRouter from '../Routes/books';
+import { Secret, RemoteURI } from './db'; // Update path as required
 
-// Step 1 for auth - import modules
-import session from 'express-session';
-import passport from 'passport';
-import passportLocal from 'passport-local';
-import flash from 'connect-flash';
-import connect from 'connect';
+mongoose.connect(RemoteURI);
+const db = mongoose.connection;
+db.on('open', () => console.log(`Connected to MongoDB`));
+db.on('error', () => console.error('Connection Error'));
 
-// modules for JWT support
-import cors from 'cors'; // Cross-Origin Resource Sharing
-
-// Step 2 for auth - define our auth objects
-//let localStrategy = passportLocal.Strategy; // alias
-
-// Step 3 for auth - import the User Model
-
-
-// import router data from the router module(s)
-import indexRouter from '../Routes/index'; 
-import authRouter from '../Routes/auth.route.server'
-import booksRouter from '../Routes/books'
-
-
-
-
-// create the application object - which is of type express
 const app = express();
+const Port = 3001;
 
-
-
-
-// Complete the DB Connection Configuration
-
-import * as DBConfig from './db'
-
-mongoose.connect(DBConfig.RemoteURI);
-const db = mongoose.connection; // alias for the mongoose connection
-
-// Listen for Connections or Errors
-db.on("open", function()
-{
-  console.log(`Connected to MongoDB at: ${DBConfig.HostName}`);
-});
-
-db.on("error", function()
-{
-  console.error(`Connection Error`);
-});
-
-
-
-
-
-
-// view engine setup
 app.set('views', path.join(__dirname, '../Views'));
 app.set('view engine', 'ejs');
-
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../../Client')));
 
-app.use(express.static(path.join(__dirname, '../../node_modules')));
+app.use(cors());
 
-app.use(cors()); // adds CORS middleware
-
-// Step 4 for auth - setup express session
 app.use(session({
-  secret: DBConfig.Secret,
+  secret: Secret,
   saveUninitialized: false,
   resave: false
 }));
 
-
-
-// Step 5 for auth - setup Connect Flash
 app.use(flash());
-
-// Step 6 for auth - initialize passport and session
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Step 7 for auth - implement the auth strategy
-//passport.use(User.createStrategy());
+const LocalStrategy = passportLocal.Strategy;
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-// Step 8 for auth - setup User serialization and deserialization (encoding / decoding)
-//passport.serializeUser(User.serializeUser());
-//passport.deserializeUser(User.deserializeUser());
+let JWTStrategy = passportJWT.Strategy;
+let ExtractJWT = passportJWT.ExtractJwt;
+let jwtOptions = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  secretOrKey: Secret
+};
 
-// add routing 
+let strategy = new JWTStrategy(jwtOptions, (jwt_payload: any, done: any) => {
+  User.findById(jwt_payload.id)
+      .then(user => {
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false); // Return false if the user is not found
+        }
+      })
+      .catch(err => {
+        return done(err, false);
+      });
+});
+
+
+passport.use(strategy);
+
 app.use('/', indexRouter);
 app.use('/', authRouter);
 app.use('/', booksRouter);
 
+app.use((req, res, next) => { next(createError(404)); });
 
-
-
-
-
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) 
-{
-  next(createError(404));
-});
-
-// error handler
-app.use(function(err: createError.HttpError, req: express.Request, res: express.Response, next: NextFunction) 
-{
-  // set locals, only providing error in development
+app.use((err: createError.HttpError, req: express.Request, res: express.Response, next: express.NextFunction) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
 
-
+app.listen(Port, () => {
+  console.log(`Localhost:3000 app listening on port ${Port}`);
+});
 
 export default app;
-
-
-
-

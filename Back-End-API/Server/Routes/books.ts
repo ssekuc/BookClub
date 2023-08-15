@@ -1,6 +1,6 @@
 
 
-import express from 'express';
+import express = require("express");
 import { upload } from '../controllers/book';
 const router = express.Router();
 
@@ -25,11 +25,5 @@ router.patch('/api/book/update/:id', bookController.getBookById, bookController.
 
 //DELETE BOOK 
 router.delete('/api/book/delete/:id', bookController.getBookById, bookController.deleteBook)
-
-
-
-
-
-module.exports = router
 
 export default router;

@@ -1,7 +1,9 @@
 // user.ts
 import mongoose, { Document, Schema, Model } from 'mongoose';
 // @ts-ignore
-import passportLocalMongoose from 'passport-local-mongoose';
+const passportLocalMongoose = require('passport-local-mongoose');
+
+
 import Roles from './roles';
 
 export interface IUser extends Document {
@@ -12,6 +14,9 @@ export interface IUser extends Document {
 }
 
 export interface IUserModel extends Model<IUser> {
+    createStrategy(): any;
+    serializeUser(): any;
+    deserializeUser(): any;
     register(user: IUser, password: string, cb: (error: any, user?: IUser) => void): void;
 }
 
@@ -25,7 +30,7 @@ const UserSchema = new Schema<IUser>({
   
 });
 
-UserSchema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose as any);
 
 const User: IUserModel = mongoose.model<IUser, IUserModel>('User', UserSchema);
 

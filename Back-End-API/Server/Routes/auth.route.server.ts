@@ -1,4 +1,4 @@
-import express from 'express';
+import express = require('express');
 import Roles from '../models/roles'
 const router = express.Router();
 

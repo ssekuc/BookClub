@@ -5,9 +5,12 @@
   "main": "server.js",
   "author": "group #4 comp-231",
   "license": "MIT",
+  "scripts": {
+    "start": "nodemon server.ts"
+  },
   "dependencies": {
     "@types/multer": "^1.4.7",
-    "@types/passport-local-mongoose": "^6.1.1",
+    "@types/node": "^20.5.0",
     "axios": "^1.4.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
@@ -21,12 +24,11 @@
     "mongoose": "^7.4.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.0.1",
     "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
-    "react-router-dom": "^6.15.0",
-    "typescript": "^5.1.6"
+    "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
     "@types/connect-flash": "^0.0.37",
@@ -40,6 +42,11 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.4",
     "@types/passport": "^1.0.12",
-    "@types/passport-local": "^1.0.35"
+    "@types/passport-jwt": "^3.0.9",
+    "@types/passport-local": "^1.0.35",
+    "@types/passport-local-mongoose": "^6.1.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
   }
 }

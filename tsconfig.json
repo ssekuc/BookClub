@@ -15,6 +15,7 @@
         "alwaysStrict": true,
         "noImplicitReturns": true,
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "moduleResolution": "Node"

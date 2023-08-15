@@ -1,82 +1,80 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const http_errors_1 = __importDefault(require("http-errors"));
-const express_1 = __importDefault(require("express"));
-const path_1 = __importDefault(require("path"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const morgan_1 = __importDefault(require("morgan"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const express_session_1 = __importDefault(require("express-session"));
-const passport_1 = __importDefault(require("passport"));
-const connect_flash_1 = __importDefault(require("connect-flash"));
-const cors_1 = __importDefault(require("cors"));
-const index_1 = __importDefault(require("../Routes/index"));
-const auth_route_server_1 = __importDefault(require("../Routes/auth.route.server"));
-const books_1 = __importDefault(require("../Routes/books"));
-const app = (0, express_1.default)();
-const DBConfig = __importStar(require("./db"));
-mongoose_1.default.connect(DBConfig.RemoteURI);
-const db = mongoose_1.default.connection;
-db.on("open", function () {
-    console.log(`Connected to MongoDB at: ${DBConfig.HostName}`);
-});
-db.on("error", function () {
-    console.error(`Connection Error`);
-});
-app.set('views', path_1.default.join(__dirname, '../Views'));
+var express = require("express");
+var mongoose = require("mongoose");
+var passport = require("passport");
+var passportLocal = require("passport-local");
+var session = require("express-session");
+var cookieParser = require("cookie-parser");
+var path = require("path");
+var cors = require("cors");
+var passportJWT = require("passport-jwt");
+var logger = require("morgan");
+var createError = require("http-errors");
+var flash = require("connect-flash");
+var user_1 = require("../models/user");
+var index_1 = require("../Routes/index");
+var auth_route_server_1 = require("../Routes/auth.route.server");
+var books_1 = require("../Routes/books");
+var db_1 = require("./db"); // Update path as required
+mongoose.connect(db_1.RemoteURI);
+var db = mongoose.connection;
+db.on('open', function () { return console.log("Connected to MongoDB"); });
+db.on('error', function () { return console.error('Connection Error'); });
+var app = express();
+var Port = 3001;
+app.set('views', path.join(__dirname, '../Views'));
 app.set('view engine', 'ejs');
-app.use((0, morgan_1.default)('dev'));
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cookie_parser_1.default)());
-app.use(express_1.default.static(path_1.default.join(__dirname, '../../Client')));
-app.use(express_1.default.static(path_1.default.join(__dirname, '../../node_modules')));
-app.use((0, cors_1.default)());
-app.use((0, express_session_1.default)({
-    secret: DBConfig.Secret,
+app.use(express.static(path.join(__dirname, '../public')));
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(cors());
+app.use(session({
+    secret: db_1.Secret,
     saveUninitialized: false,
     resave: false
 }));
-app.use((0, connect_flash_1.default)());
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+var LocalStrategy = passportLocal.Strategy;
+passport.use(user_1.default.createStrategy());
+passport.serializeUser(user_1.default.serializeUser());
+passport.deserializeUser(user_1.default.deserializeUser());
+var JWTStrategy = passportJWT.Strategy;
+var ExtractJWT = passportJWT.ExtractJwt;
+var jwtOptions = {
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: db_1.Secret
+};
+var strategy = new JWTStrategy(jwtOptions, function (jwt_payload, done) {
+    user_1.default.findById(jwt_payload.id)
+        .then(function (user) {
+        if (user) {
+            return done(null, user);
+        }
+        else {
+            return done(null, false); // Return false if the user is not found
+        }
+    })
+        .catch(function (err) {
+        return done(err, false);
+    });
+});
+passport.use(strategy);
 app.use('/', index_1.default);
 app.use('/', auth_route_server_1.default);
 app.use('/', books_1.default);
-app.use(function (req, res, next) {
-    next((0, http_errors_1.default)(404));
-});
+app.use(function (req, res, next) { next(createError(404)); });
 app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
     res.status(err.status || 500);
     res.render('error');
 });
+app.listen(Port, function () {
+    console.log("Localhost:3000 app listening on port ".concat(Port));
+});
 exports.default = app;
-//# sourceMappingURL=app.js.map

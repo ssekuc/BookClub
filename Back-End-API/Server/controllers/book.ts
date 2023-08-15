@@ -1,7 +1,7 @@
-import express from "express";
-import mongoose from "mongoose";
-import multer, { FileFilterCallback } from 'multer';
-import path from 'path'
+// import express from "express";
+// import mongoose from "mongoose";
+import multer = require('multer');
+import path = require('path')
 import Books from '../models/books'
 
 

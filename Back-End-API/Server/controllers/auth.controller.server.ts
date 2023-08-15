@@ -1,6 +1,6 @@
-import * as express from "express";
+import express = require("express");
 import { Request, Response, NextFunction } from "express";
-import * as passport from "passport";
+import passport = require("passport");
 import User, { IUser } from "../models/user";
 import { UserDisplayName } from "../utils/index";
 
@@ -54,20 +54,21 @@ export function ProcessRegisterPage(req: Request, res: Response, next: NextFunct
     let newUser: IUser = new User({
         username: req.body.username,
         emailAddress: req.body.emailAddress,
-        displayName: req.body.firstName + " " + req.body.lastName
+        displayName: req.body.firstName + " " + req.body.lastName,
+        role: "64dace419da525abbab2c3ae"
     });
 
     User.register(newUser, req.body.password, function(err: any) {
         if(err){
             if(err.name == "UserExistsError"){
-                console.error('ERROR: User Already Exists!');
+                console.error('ERROR : User Already Exists!');
                 req.flash('registerMessage', 'Registration Error')
             } else {
-                console.error(err.name);
+                console.error(err);
                 req.flash('registerMessage', 'Server Error')
             }
 
-            return res.redirect('/register');
+            // return res.redirect('/register');
         }
 
         return passport.authenticate('local')(req, res, function() {
